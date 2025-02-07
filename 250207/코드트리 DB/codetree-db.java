@@ -12,11 +12,9 @@ class Query{
 }
 
 class Element{
-	String name;
 	long rvalue;
 	int value = 0;
-	Element(String name, long rvalue){
-		this.name = name;
+	Element(long rvalue){
 		this.rvalue = rvalue;
 	}
 }
@@ -90,10 +88,9 @@ class Main {
 	static Query[] querys;
 	static int Q;
 	static TreeMap<String, Integer> map = new TreeMap<>();
-	static List<Integer> temp = new ArrayList<>();
+	static List<Element> temp = new ArrayList<>();
 	
 	static TreeSet<String> existNames = new TreeSet<>();
-	static TreeSet<Integer> existValues = new TreeSet<>();
 	
 	
 	public static void main(String[] args) throws Exception {
@@ -128,7 +125,7 @@ class Main {
 				params.add(name);
 				params.add(value);
 				querys[i] = new Query(op,params);
-				temp.add(Integer.parseInt(value));
+				temp.add(new Element(Integer.parseInt(value)));
 				
 				continue;
 			}
@@ -142,19 +139,24 @@ class Main {
 	
 	static void coordinateCompression() {
 		
-		Collections.sort(temp, (a,b) -> a-b);
+		Collections.sort(temp, (a,b) -> (int)(a.rvalue-b.rvalue));
 		
-		int compressedValue = 1;
-		for(int e : temp) {
-			e = compressedValue;
-			compressedValue++;
+		int compressedValue = 0, prev = 0;
+		
+		for(Element e : temp) {
+			if(e.rvalue == prev) {
+				e.value = compressedValue;
+				continue;
+			}
+			e.value = ++compressedValue;
+			prev = (int)e.rvalue;
 		}
 		
 	}
 	
 	static void solve() throws Exception{
 		
-		int N = temp.size() + 1;
+		int N = temp.get(temp.size()-1).value;
 		SegTree segtree = new SegTree(N);
 		
 		for(Query q : querys) {
@@ -162,26 +164,28 @@ class Main {
 			if(op.equals("init")) {
 				segtree.init();
 				existNames = new TreeSet<>();
-				existValues = new TreeSet<>();
 				map = new TreeMap<>();
 			}
 			else if(op.equals("insert")) {
 				String name = q.params.get(0);
 				long value = Long.parseLong(q.params.get(1));
 				
-				if(existNames.contains(name) || existValues.contains((int)value)) {
+				if(existNames.contains(name)) {
 					bw.write("0\n");
 				}
 				else {
 					existNames.add(name);
-					existValues.add((int)value);
 					
-					int idx = findIndexToValue((int)value) + 1;
+					int idx = findIndexToValue((int)value);
+					
 					long res = segtree.upt(1, N, idx, value, name, 1);
 					
+					
+					
 					if(res != 0) {
+						
 						bw.write("1\n");
-						map.put(name, (int)idx - 1);
+						map.put(name, idx);
 					}
 					else bw.write("0\n");
 					
@@ -191,15 +195,14 @@ class Main {
 			else if(op.equals("delete")) {
 				String name = q.params.get(0);
 				
-				int idx = findIndexToName(name) + 1;
-				if(idx == 0) bw.write("0\n");
+				int idx = findIndexToName(name);
+				if(idx == -1) bw.write("0\n");
 				else {
 					long res = segtree.upt(1, N, idx, 0, "", 1);
 					
 					if(res == 0) bw.write("0\n");
 					else {
 						existNames.remove(name);
-						existValues.remove((int)res);
 						map.remove(name);
 						bw.write(res + "\n");
 					}
@@ -216,7 +219,7 @@ class Main {
 			else {
 				long value = Long.parseLong(q.params.get(0));
 				
-				bw.write(segtree.sum(1, N, 1, findIndexToValue((int)value) + 1, 1) + "\n");
+				bw.write(segtree.sum(1, N, 1, findIndexToValue((int)value), 1) + "\n");
 			}
 			
 			bw.flush();
@@ -226,12 +229,14 @@ class Main {
 	
 	static int findIndexToValue(int k) {
 		int s = 0, e = temp.size()-1, m = (s+e+1)>>1;
+		Element now = temp.get(m);
 		while(s<e) {
-			if(temp.get(m) > k) e = m-1;
+			if(now.rvalue > k) e = m-1;
 			else s = m;
 			m = (s+e+1)>>1;
+			now = temp.get(m);
 		}
-		return m;
+		return now.value;
 	}
 	
 	static int findIndexToName(String name) {
