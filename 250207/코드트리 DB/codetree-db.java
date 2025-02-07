@@ -165,13 +165,6 @@ class Main {
 				String name = q.params.get(0);
 				long value = Long.parseLong(q.params.get(1));
 				
-				if(existNames.contains(name) || existValues.contains((int)value)) {
-					bw.write("0\n");
-				}
-				else {
-					existNames.add(name);
-					existValues.add((int)value);
-					
 					int idx = findIndexToValue((int)value) + 1;
 					long res = segtree.upt(1, N, idx, value, name, 1);
 					
@@ -181,7 +174,6 @@ class Main {
 					}
 					else bw.write("0\n");
 					
-				}
 				
 			}
 			else if(op.equals("delete")) {
@@ -194,8 +186,6 @@ class Main {
 					
 					if(res == 0) bw.write("0\n");
 					else {
-						existNames.remove(name);
-						existValues.remove((int)res);
 						map.remove(name);
 						bw.write(res + "\n");
 					}
