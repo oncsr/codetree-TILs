@@ -163,6 +163,7 @@ class Main {
 				segtree.init();
 				existNames = new TreeSet<>();
 				existValues = new TreeSet<>();
+				map = new TreeMap<>();
 			}
 			else if(op.equals("insert")) {
 				String name = q.params.get(0);
