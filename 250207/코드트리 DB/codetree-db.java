@@ -147,7 +147,6 @@ class Main {
 		int compressedValue = 1;
 		for(Element e : temp) {
 			e.value = compressedValue;
-			map.put(e.name, e.value);
 			compressedValue++;
 		}
 		
@@ -175,10 +174,14 @@ class Main {
 				else {
 					existNames.add(name);
 					existValues.add((int)value);
+					
 					int idx = findIndexToValue((int)value) + 1;
 					long res = segtree.upt(1, N, idx, value, name, 1);
 					
-					if(res == 0) bw.write("1\n");
+					if(res == 0) {
+						bw.write("1\n");
+						map.put(name, (int)idx - 1);
+					}
 					else bw.write("0\n");
 					
 				}
@@ -196,6 +199,7 @@ class Main {
 					else {
 						existNames.remove(name);
 						existValues.remove((int)res);
+						map.remove(name);
 						bw.write(res + "\n");
 					}
 					
