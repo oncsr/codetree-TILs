@@ -86,7 +86,7 @@ class Main {
 	static Query[] querys;
 	static int Q;
 	static TreeMap<String, Integer> map = new TreeMap<>();
-	static List<Element> temp = new ArrayList<>();
+	static List<Integer> temp = new ArrayList<>();
 	
 	static TreeSet<String> existNames = new TreeSet<>();
 	static TreeSet<Integer> existValues = new TreeSet<>();
@@ -124,7 +124,7 @@ class Main {
 				params.add(name);
 				params.add(value);
 				querys[i] = new Query(op,params);
-				temp.add(new Element(name, Long.parseLong(value)));
+				temp.add(Integer.parseInt(value));
 				
 				continue;
 			}
@@ -138,15 +138,11 @@ class Main {
 	
 	static void coordinateCompression() {
 		
-		Collections.sort(temp, (a,b) -> {
-			if(a.rvalue == b.rvalue) return 0;
-			if(a.rvalue < b.rvalue) return -1;
-			return 1;
-		});
+		Collections.sort(temp, (a,b) -> a-b);
 		
 		int compressedValue = 1;
-		for(Element e : temp) {
-			e.value = compressedValue;
+		for(int e : temp) {
+			e = compressedValue;
 			compressedValue++;
 		}
 		
@@ -227,7 +223,7 @@ class Main {
 	static int findIndexToValue(int k) {
 		int s = 0, e = temp.size()-1, m = (s+e+1)>>1;
 		while(s<e) {
-			if(temp.get(m).rvalue > k) e = m-1;
+			if(temp.get(m) > k) e = m-1;
 			else s = m;
 			m = (s+e+1)>>1;
 		}
