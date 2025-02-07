@@ -38,15 +38,19 @@ class SegTree{
 		if(s == e) {
 			if(v > 0) {
 				if(seg[n] != 0) return 0;
+				seg[n] = v;
+				cnt[n] = 1;
+				names[s] = name;
+				return 1;
 			}
 			else {
 				if(seg[n] == 0) return 0;
+				long prev = seg[n];
+				seg[n] = 0;
+				cnt[n] = 0;
+				names[s] = "";
+				return prev;
 			}
-			long prev = seg[n];
-			seg[n] = v;
-			cnt[n] = v > 0 ? 1 : 0;
-			names[s] = name;
-			return prev;
 		}
 		int m=(s+e)>>1;
 		long res;
@@ -175,7 +179,7 @@ class Main {
 					int idx = findIndexToValue((int)value) + 1;
 					long res = segtree.upt(1, N, idx, value, name, 1);
 					
-					if(res == 0) {
+					if(res != 0) {
 						bw.write("1\n");
 						map.put(name, (int)idx - 1);
 					}
