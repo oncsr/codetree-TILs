@@ -19,6 +19,7 @@ class Main {
 	static int N, G;
 	static TreeSet<Integer>[] T;
 	static TreeSet<Integer>[] S;
+	static boolean[] vis;
 	
 	public static void main(String[] args) throws Exception {
 			
@@ -52,14 +53,22 @@ class Main {
 	static void solve() throws Exception{
 		
 		Queue<Integer> Q = new LinkedList<>();
+		vis = new boolean[N+1];
 		Q.add(1);
+		vis[1] = true;
 		int cnt = 0;
 		while(!Q.isEmpty()) {
 			int now = Q.poll();
 			cnt++;
 			for(int i:T[now]) {
 				S[i].remove(now);
-				if(S[i].size() == 1) Q.add(S[i].first());
+				if(S[i].size() == 1) {
+					int a = S[i].first();
+					if(!vis[a]) {
+						vis[a] = true;
+						Q.add(a);
+					}
+				}
 			}
 		}
 		bw.write(cnt + "\n");
