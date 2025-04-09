@@ -60,7 +60,7 @@ class Main {
 	
 	static void dfs(int n, int t) {
 		if(ans == 0) return;
-		for(int i:V[n]) if(C[i] == 1) {
+		for(int i:V[n]) if(C[i] == -1) {
 			C[i] = t^1;
 			dfs(i, t^1);
 		} else if(C[i] != (t^1)) {
