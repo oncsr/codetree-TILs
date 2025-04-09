@@ -52,6 +52,7 @@ class Main {
 	
 	static void solve() throws Exception{
 		
+		C[1] = 0;
 		dfs(1,0);
 		bw.write(ans + "\n");
 		
