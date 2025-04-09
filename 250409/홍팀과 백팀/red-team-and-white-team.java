@@ -23,7 +23,6 @@ class Main {
 	static int N, M;
 	static List<Integer>[] V;
 	static int[] C;
-	static int ans = 1;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -52,19 +51,22 @@ class Main {
 	
 	static void solve() throws Exception{
 		
-		C[1] = 0;
-		dfs(1,0);
-		bw.write(ans + "\n");
+		for(int i=1;i<=N;i++) if(C[i] == -1) {
+			C[i] = 0;
+			dfs(i,0);
+		}
+		for(int i=1;i<=N;i++) for(int j:V[i]) if(C[i] == C[j]) {
+			bw.write("0");
+			return;
+		}
+		bw.write("1");
 		
 	}
 	
 	static void dfs(int n, int t) {
-		if(ans == 0) return;
 		for(int i:V[n]) if(C[i] == -1) {
 			C[i] = t^1;
 			dfs(i, t^1);
-		} else if(C[i] != (t^1)) {
-			ans = 0;
 		}
 	}
 	
