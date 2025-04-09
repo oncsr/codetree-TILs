@@ -22,6 +22,8 @@ class Main {
 	
 	static int N, M;
 	static List<Integer>[] V;
+	static int[] C;
+	static int ans = 1;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -43,30 +45,26 @@ class Main {
 			V[a].add(b);
 			V[b].add(a);
 		}
+		C = new int[N+1];
+		Arrays.fill(C, -1);
 		
 	}
 	
 	static void solve() throws Exception{
 		
-		Queue<int[]> Q = new LinkedList<>();
-		Q.offer(new int[] {1,0});
-		int[] C = new int[N+1];
-		Arrays.fill(C, -1);
-		C[1] = 0;
+		dfs(1,0);
+		bw.write(ans + "\n");
 		
-		while(!Q.isEmpty()) {
-			int[] now = Q.poll();
-			int n = now[0], t = now[1];
-			for(int i:V[n]) if(C[i] == -1) {
-				C[i] = t^1;
-				Q.offer(new int[] {i,t^1});
-			} else if(C[i] != (t^1)) {
-				bw.write("0");
-				return;
-			}
+	}
+	
+	static void dfs(int n, int t) {
+		if(ans == 0) return;
+		for(int i:V[n]) if(C[i] == 1) {
+			C[i] = t^1;
+			dfs(i, t^1);
+		} else if(C[i] != (t^1)) {
+			ans = 0;
 		}
-		bw.write("1");
-		
 	}
 	
 }
